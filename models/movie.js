@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { readJSON } from "../utils"
+import { readJSON } from '../utils.js'
 
 const movies = readJSON('../movies.json')
 
@@ -13,10 +13,12 @@ export class MovieModel {
 
         return movies
     }
+
     static async getByID({ id }){
         const movie = movies.find(movie => movie.id === id)
         return movie
     }
+
     static async create({ input }){
         const newMovie = {
             id: randomUUID(),
@@ -27,6 +29,7 @@ export class MovieModel {
 
         return newMovie
     }
+
     static async delete({ id }){
         const movieIndex = movies.findIndex(movie => movie.id === id)
         if(movieIndex === -1) return false
@@ -34,6 +37,7 @@ export class MovieModel {
         movies.splice(movieIndex, 1)
         return true
     }
+
     static async update({ id, input }){
         const movieIndex = movies.findIndex(movie => movie.id === id)
         if(movieIndex === -1) return false

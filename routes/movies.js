@@ -1,4 +1,4 @@
-import  { Router } from 'express'
+import { Router } from 'express'
 
 import { MovieController } from '../controllers/movies.js'
 
@@ -8,5 +8,5 @@ moviesRouter.get('/', MovieController.getAll) // Recuperar todas las peliculas d
 moviesRouter.post('/', MovieController.create) // Crear pelicula
 
 moviesRouter.get('/:id', MovieController.getById)  // Recuperar una película por id
-moviesRouter.delete('/movies/:id', MovieController.delete) // Eliminar pelicula
-moviesRouter.patch('/movies/:id', MovieController.update) // Actualizar pelicula
+moviesRouter.delete('/:id', MovieController.delete) // Eliminar pelicula
+moviesRouter.patch('/:id', MovieController.update) // Actualizar pelicula

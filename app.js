@@ -1,7 +1,7 @@
 // crear nuestro primer servidor
 import express, { json } from 'express' // require -> commonJS
-import { moviesRouter } from './routes/movies'
-import { corsMiddleware } from './middlewares/cors'
+import { moviesRouter } from './routes/movies.js'
+import { corsMiddleware } from './middlewares/cors.js'
 
 // import movies from './movies.json' // <- ESTO NO ES VÁLIDO EN NODE
 // EN EL FUTURO: el import del json será así:
@@ -25,5 +25,5 @@ app.use('/movies', moviesRouter)
 const PORT = process.env.PORT ?? 1234
 
 app.listen(PORT, () => {
-  console.log(`Server Listening on Port ----- http://localhost:${PORT}`)
+  console.log(`server listening on port http://localhost:${PORT}`)
 })
