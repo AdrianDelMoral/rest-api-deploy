@@ -1,32 +1,27 @@
-import  { randomUUID } from 'node:cypto' // libreria para encriptar y generar id dinámicamente por ejemplo
 import  { Router } from 'express'
 
 import { validateMovie, validatePartialMovie } from '../schemas/movies.js'
-import { readJSON } from '../utils.js'
 import { MovieModel } from '../model/movie.js'
 
-const movies = readJSON('../movies.json')
 export const moviesRouter = Router()
 
-// Todas las rutas que sean "/movies", responderan a este router que hemos creado:
-
 // Recuperar todas las peliculas de un genero
-moviesRouter.get('/', (req, res) => {
+moviesRouter.get('/', async (req, res) => {
     const { genre } = req.query
-    const movies = MovieModel.getAll({ genre })
+    const movies = await MovieModel.getAll({ genre })
     res.json(movies)
 })
 
 // Recuperar una película por id
-moviesRouter.get('/:id', (req, res) => { //
+moviesRouter.get('/:id', async (req, res) => { //
     const { id } = req.params
-    const movie = movies.find(movie => movie.id === id)
+    const movie = await MovieModel.getByID({ id })
     if (movie) return res.json(movie)
     res.status(404).json({ message: 'Movie not found' })
 })
 
 // Crear pelicula
-moviesRouter.get('/', (req, res) => {
+moviesRouter.post('/', async (req, res) => {
     const result = validateMovie(req.body)
     
     if (result.error) {
@@ -34,31 +29,26 @@ moviesRouter.get('/', (req, res) => {
         return res.status(400).json({ error: JSON.parse(result.error.message) })
     }
     
-    const newMovie = {
-        // crear id dinámicamente
-        id: randomUUID(), // crea uuid v4 (Unviersal Unique Identifier)
-        ...result.data
-    }
+    const newMovie = await MovieModel.create({ input: result.data })
 
-    movies.push(newMovie)
     res.status(201).json(newMovie) // actualizar la caché del cliente y evitar crear una nueva request
 })
 
 // Eliminar pelicula
-moviesRouter.delete('/movies/:id', (req, res) => {
+moviesRouter.delete('/movies/:id', async (req, res) => {
     const { id } = req.params
-    const movieIndex = movies.findIndex(movie => movie.id === id)
 
-    if (movieIndex === -1) {
+    const result = await MovieModel.delete({ id })
+
+    if (result === false) {
         return res.status(404).json({ message: 'Movie not found' })
     }
 
-    movies.splice(movieIndex, 1)
     return res.json({ message: 'Movie deleted' })
 })
 
 // Actualizar pelicula
-moviesRouter.patch('/movies/:id', (req, res) => {
+moviesRouter.patch('/movies/:id', async (req, res) => {
     const result = validatePartialMovie(req.body)
     
     if (!result.success) {
@@ -66,17 +56,8 @@ moviesRouter.patch('/movies/:id', (req, res) => {
     }
     
     const { id } = req.params
-    const movieIndex = movies.findIndex(movie => movie.id === id)
+    
+    const updatedMovie = await MovieModel.update({ id, input: result.data })
 
-    if (movieIndex === -1) {
-        return res.status(404).json({ message: 'Movie not found' })
-    }
-
-    const updateMovie = {
-        ...movies[movieIndex],
-        ...result.data
-    }
-
-    movies[movieIndex] = updateMovie
-    return res.json(updateMovie)
+    return res.json(updatedMovie)
 })
