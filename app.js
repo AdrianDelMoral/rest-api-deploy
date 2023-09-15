@@ -1,12 +1,24 @@
 // crear nuestro primer servidor
-const express = require('express') // require -> commonJS
-const crypto = require('node:crypto') // libreria para encriptar y generar id dinámicamente por ejemplo
-const cors = require('cors')
+import express, { json } from 'express' // require -> commonJS
+import { randomUUID } from 'node:crypto' // libreria para encriptar y generar id dinámicamente por ejemplo
+import cors from 'cors'
+
+import { validateMovie, validatePartialMovie } from './schemas/movies.js'
+// import movies from './movies.json' // <- ESTO NO ES VÁLIDO EN NODE
+// import movies from './movies.json' with { type: 'json'} // <- ESTA SINTAXIS NO EXISTE 
+
+// como leer un json en ESModules
+/* import fs from 'node:fs'
+ const movies = JSON.parse(fs.readFile('./movies.json', 'utf-8')) */
+
+// como leer un json en ESModules recomendado por ahora
+import {createRequire} from 'node:module'
+const require = createRequire(import.meta.url)
 const movies = require('./movies.json')
-const { validateMovie, validatePartialMovie } = require('./schemas/movies')
+
 
 const app = express()
-app.use(express.json())
+app.use(json())
 app.use(cors({
   origin: (origin, callback) => {
     const ACCEPTED_ORIGINS = [
@@ -66,7 +78,7 @@ app.post('/movies', (req, res) => {
 
   const newMovie = {
     // crear id dinámicamente
-    id: crypto.randomUUID(), // crea uuid v4 (Unviersal Unique Identifier)
+    id: randomUUID(), // crea uuid v4 (Unviersal Unique Identifier)
     ...result.data
   }
 
