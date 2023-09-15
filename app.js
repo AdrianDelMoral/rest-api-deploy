@@ -18,17 +18,10 @@ app.use(json())
 app.use(corsMiddleware())
 app.disable('x-powered-by') // desactivar el header X-Powered-By: Express
 
-// -------------------------------------------------
-
 // Todos los recursos que sean MOVIES se identificará con /movies
 // Cuando acceda a /movies podré acceder a todas las rutas que tengo en moviesRouter(hemos separado todas las rutas que tengan que ver con /movies, que va a ser como el prefijo)
 app.use('/movies', moviesRouter)
 
-app.options('/:id', (req, res) => {
-  res.send(200)
-})
-
-// -------------------------------------------------
 const PORT = process.env.PORT ?? 1234
 
 app.listen(PORT, () => {
