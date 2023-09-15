@@ -2,26 +2,18 @@ import  { randomUUID } from 'node:cypto' // libreria para encriptar y generar id
 import  { Router } from 'express'
 
 import { validateMovie, validatePartialMovie } from '../schemas/movies.js'
-
-import { readJSON } from '../utils'
+import { readJSON } from '../utils.js'
+import { MovieModel } from '../model/movie.js'
 
 const movies = readJSON('../movies.json')
 export const moviesRouter = Router()
 
 // Todas las rutas que sean "/movies", responderan a este router que hemos creado:
 
-// Recuperar todas las peliculas
+// Recuperar todas las peliculas de un genero
 moviesRouter.get('/', (req, res) => {
-    // Recuperar todas las películas por un género
     const { genre } = req.query
-    if (genre) {
-        const filteredMovies = movies.filter(
-            movie => movie.genre.some(
-                g => g.toLowerCase() === genre.toLowerCase()
-            )
-        )
-    return res.json(filteredMovies)
-    }
+    const movies = MovieModel.getAll({ genre })
     res.json(movies)
 })
 
