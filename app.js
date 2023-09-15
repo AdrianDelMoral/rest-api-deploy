@@ -4,17 +4,18 @@ import { randomUUID } from 'node:crypto' // libreria para encriptar y generar id
 import cors from 'cors'
 
 import { validateMovie, validatePartialMovie } from './schemas/movies.js'
+import { readJSON } from './utils.js'
 // import movies from './movies.json' // <- ESTO NO ES VÁLIDO EN NODE
-// import movies from './movies.json' with { type: 'json'} // <- ESTA SINTAXIS NO EXISTE 
+// EN EL FUTURO: el import del json será así:
+// import movies from './movies.json' with { type: 'json'} // <- 
 
 // como leer un json en ESModules
 /* import fs from 'node:fs'
  const movies = JSON.parse(fs.readFile('./movies.json', 'utf-8')) */
 
 // como leer un json en ESModules recomendado por ahora
-import {createRequire} from 'node:module'
-const require = createRequire(import.meta.url)
-const movies = require('./movies.json')
+
+const movies = readJSON('./movies.json')
 
 
 const app = express()
